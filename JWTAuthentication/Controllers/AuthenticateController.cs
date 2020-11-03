@@ -30,7 +30,7 @@ namespace JWTAuthentication.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             var user = await userManager.FindByNameAsync(model.Username);
             if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
@@ -68,12 +68,12 @@ namespace JWTAuthentication.Controllers
         }
 
         [HttpPost]
-        [Route("register")]
+        [Route("register-user")]
         public async Task<IActionResult> Register([FromForm] RegisterModel model)
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Lỗi", Message = "Tài khoản đã tồn tại !" });
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -83,7 +83,7 @@ namespace JWTAuthentication.Controllers
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Lỗi", Message = "Không thể tạo người dùng, vui lòng xem lại" });
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
@@ -93,7 +93,7 @@ namespace JWTAuthentication.Controllers
             {
                 await userManager.AddToRoleAsync(user, UserRoles.User);
             }
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            return Ok(new Response { Status = "Thành công", Message = "Tạo thành công tài khoản người dùng" });
         }
 
         [HttpPost]
@@ -102,7 +102,7 @@ namespace JWTAuthentication.Controllers
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Lỗi", Message = "Tài khoản đã tồn tại !" });
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -112,7 +112,7 @@ namespace JWTAuthentication.Controllers
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Lỗi", Message = "Không thể tạo người dùng, vui lòng xem lại" });
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
@@ -124,7 +124,7 @@ namespace JWTAuthentication.Controllers
                 await userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            return Ok(new Response { Status = "Thành công", Message = "Tạo thành công tài khoản quản trị" });
         }
     }
 }

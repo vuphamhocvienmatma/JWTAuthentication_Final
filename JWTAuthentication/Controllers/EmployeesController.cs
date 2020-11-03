@@ -32,7 +32,7 @@ namespace JWTAuthentication.Controllers
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             var employee = await _context.employees.FindAsync(id);
@@ -48,8 +48,9 @@ namespace JWTAuthentication.Controllers
         // PUT: api/Employees/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        public async Task<IActionResult> PutEmployee(int id, [FromForm] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -80,8 +81,9 @@ namespace JWTAuthentication.Controllers
         // POST: api/Employees
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> PostEmployee([FromForm] Employee employee)
         {
             _context.employees.Add(employee);
             await _context.SaveChangesAsync();
@@ -90,6 +92,7 @@ namespace JWTAuthentication.Controllers
         }
 
         // DELETE: api/Employees/5
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Employee>> DeleteEmployee(int id)
         {
